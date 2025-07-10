@@ -23,7 +23,7 @@ Your output should be a detailed, step-by-step plan that a startup founder can i
 });
 
 export const marketingPlanAgentConfig = {
-  id: 'marketing-plan',
+  type: 'marketing-plan' as const,
   name: 'Marketing Plan',
   description: 'Generate a marketing plan to reach $1M MRR.',
   sampleQueries: [
