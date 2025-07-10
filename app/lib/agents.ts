@@ -4,6 +4,7 @@ import { marketResearchAgent } from './agents/market-research';
 import { painpointsAgent } from './agents/painpoints';
 import { eyepopAgent } from './agents/eyepop';
 import { seoAgent } from './agents/seo';
+import { marketingPlanAgent } from './agents/marketing-plan';
 
 // Create the triage agent with handoffs
 export const triageAgent = Agent.create({
@@ -16,6 +17,7 @@ export const triageAgent = Agent.create({
   - Pain Points Agent: For analyzing customer pain points and problem validation
   - EyePop Vision Agent: For analyzing images using AI vision - detecting objects, faces, text, and extracting visual insights
   - SEO Agent: For generating SEO keywords and strategy for a startup
+  - Marketing Plan Agent: For creating a marketing plan to reach $1M MRR for a startup idea.
   
   If the request is simple and you can handle it directly, do so. Otherwise, hand off to the appropriate specialist.
   
@@ -26,6 +28,7 @@ export const triageAgent = Agent.create({
     handoff(marketResearchAgent),
     handoff(painpointsAgent),
     handoff(seoAgent),
+    handoff(marketingPlanAgent),
     handoff(eyepopAgent),
   ],
 
@@ -44,6 +47,7 @@ export async function runTriageAgent(userMessage: string) {
     agentUsed: response.includes('Flesh It Out Agent') ? 'fleshit' :
                response.includes('Does It Exist Agent') ? 'market-research' : 
                response.includes('Pain Points Agent') ? 'painpoints' :
+               response.includes('Marketing Plan Agent') ? 'marketing-plan' :
                response.includes('EyePop Vision Agent') ? 'eyepop' :
                response.includes('SEO Agent') ? 'seo' : 'triage'
   };
