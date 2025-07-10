@@ -82,7 +82,7 @@ export async function analyzeImageWithEyePop(imagePath?: string, imageUrl?: stri
     console.log('✅ Connected to EyePop endpoint');
 
     // Process the image
-    let results = [];
+    const results: unknown[] = [];
     
     if (!imagePath && !imageUrl && !imageFile) {
       console.error('❌ No image path, URL, or file provided');
@@ -102,7 +102,7 @@ export async function analyzeImageWithEyePop(imagePath?: string, imageUrl?: stri
     } else if (imagePath) {
       console.log('📁 Processing file path (fallback):', imagePath);
       // This is a fallback that may not work with all EyePop versions
-      resultStream = await endpoint.process({ file: imagePath as any });
+      resultStream = await endpoint.process({ file: imagePath as unknown as File });
     } else {
       throw new Error('No valid image source provided');
     }

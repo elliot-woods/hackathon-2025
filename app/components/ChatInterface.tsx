@@ -84,7 +84,7 @@ export default function ChatInterface() {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
         <h2 className="text-xl font-semibold">AI Assistant</h2>
-        <p className="text-blue-100 text-sm">Ask me anything - I'll connect you to the right specialist</p>
+        <p className="text-blue-100 text-sm">Ask me anything - I&apos;ll connect you to the right specialist</p>
       </div>
 
       {/* Messages */}
