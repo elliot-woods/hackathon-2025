@@ -31,4 +31,6 @@ export const marketingPlanAgentConfig = {
     'A "masterclass" for learning how to code.',
     'A fintech app that automates personal investing.',
   ],
+  icon: '🚀',
+  color: 'from-green-500 to-green-600',
 }; 
