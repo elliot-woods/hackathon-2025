@@ -5,7 +5,7 @@ A NextJS webapp with AI agent chat interface featuring intelligent triage and ha
 ## Features
 
 - **Smart Triage**: Automatically routes user queries to specialized agents
-- **Multiple Agents**: Billing, Support, and Sales specialists
+- **Multiple Agents**: Specialized agents for startup development and validation
 - **Modern UI**: Clean, responsive chat interface with Tailwind CSS
 - **Real-time Chat**: Instant responses from AI agents
 - **Agent Indicators**: Visual feedback showing which agent is responding
@@ -36,9 +36,9 @@ npm run dev
 
 The chat interface automatically routes your queries to the appropriate specialist:
 
-- **Billing questions** → Billing Agent
-- **Technical support** → Support Agent  
-- **Sales inquiries** → Sales Agent
+- **Startup idea development** → Flesh It Out Agent
+- **Market validation** → Does It Exist Agent
+- **Pain point analysis** → Pain Points Agent
 - **General questions** → Triage Agent
 
 ## Architecture
@@ -46,7 +46,7 @@ The chat interface automatically routes your queries to the appropriate speciali
 - **Frontend**: Next.js 15 with React and Tailwind CSS
 - **Backend**: Next.js API routes
 - **AI**: OpenAI Agents SDK with handoff capabilities
-- **Agents**: Specialized agents for billing, support, and sales
+- **Agents**: Specialized agents for startup development and validation
 
 ## Project Structure
 

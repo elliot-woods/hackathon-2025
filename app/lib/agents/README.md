@@ -4,10 +4,9 @@ This directory contains modular agent definitions that make it easy to add new h
 
 ## Structure
 
-- `billing.ts` - Billing specialist agent
-- `support.ts` - Technical support agent  
-- `sales.ts` - Sales representative agent
+- `fleshit.ts` - Flesh It Out Agent for startup idea development
 - `market-research.ts` - Does It Exist Agent for idea validation and competitor analysis
+- `painpoints.ts` - Pain Points Agent for customer pain point analysis
 - `index.ts` - Exports all agents and configurations
 
 ## Adding a New Agent
@@ -48,17 +47,17 @@ import { yourAgent, yourAgentConfig } from './yourAgent';
 
 // Add to agents object
 export const agents = {
-  billing: billingAgent,
-  support: supportAgent,
-  sales: salesAgent,
+  fleshit: fleshItOutAgent,
+  'market-research': marketResearchAgent,
+  painpoints: painpointsAgent,
   yourAgent: yourAgent // Add here
 };
 
 // Add to configs array
 export const agentConfigs = [
-  billingAgentConfig,
-  supportAgentConfig,
-  salesAgentConfig,
+  fleshItOutAgentConfig,
+  marketResearchAgentConfig,
+  painpointsAgentConfig,
   yourAgentConfig // Add here
 ];
 
@@ -76,9 +75,9 @@ import { yourAgent } from './agents/yourAgent';
 export const triageAgent = Agent.create({
   // ... existing config
   handoffs: [
-    billingAgent, 
-    handoff(supportAgent), 
-    handoff(salesAgent),
+    handoff(fleshItOutAgent),
+    handoff(marketResearchAgent),
+    handoff(painpointsAgent),
     handoff(yourAgent) // Add here
   ]
 });
@@ -91,9 +90,9 @@ Update the `runTriageAgent` function to detect your agent:
 ```typescript
 return {
   response: response,
-  agentUsed: response.includes('Billing Agent') ? 'billing' : 
-             response.includes('Support Agent') ? 'support' : 
-             response.includes('Sales Agent') ? 'sales' :
+  agentUsed: response.includes('Flesh It Out Agent') ? 'fleshit' :
+             response.includes('Does It Exist Agent') ? 'market-research' : 
+             response.includes('Pain Points Agent') ? 'painpoints' :
              response.includes('Your Agent Name') ? 'yourAgent' : 'triage'
 };
 ```
