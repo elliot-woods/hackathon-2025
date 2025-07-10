@@ -7,6 +7,7 @@ This directory contains modular agent definitions that make it easy to add new h
 - `billing.ts` - Billing specialist agent
 - `support.ts` - Technical support agent  
 - `sales.ts` - Sales representative agent
+- `market-research.ts` - Does It Exist Agent for idea validation and competitor analysis
 - `index.ts` - Exports all agents and configurations
 
 ## Adding a New Agent

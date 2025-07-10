@@ -44,6 +44,14 @@ export default function AgentCards() {
     runAgent(selectedAgent, inputValue);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!inputValue.trim() || !selectedAgent || isLoading) return;
+      runAgent(selectedAgent, inputValue);
+    }
+  };
+
   const resetSelection = () => {
     setSelectedAgent(null);
     setInputValue('');
@@ -107,7 +115,8 @@ export default function AgentCards() {
               <textarea
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={`Ask the ${selectedAgentConfig?.name} anything...`}
+                onKeyDown={handleKeyDown}
+                placeholder={`Ask the ${selectedAgentConfig?.name} anything... (Press Enter to send, Shift+Enter for new line)`}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 rows={3}
                 disabled={isLoading}
