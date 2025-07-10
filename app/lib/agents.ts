@@ -2,6 +2,9 @@ import { Agent, handoff } from '@openai/agents';
 import { fleshItOutAgent } from './agents/fleshit';
 import { marketResearchAgent } from './agents/market-research';
 import { painpointsAgent } from './agents/painpoints';
+import { eyepopAgent } from './agents/eyepop';
+import { seoAgent } from './agents/seo';
+import { marketingPlanAgent } from './agents/marketing-plan';
 
 // Create the triage agent with handoffs
 export const triageAgent = Agent.create({
@@ -12,11 +15,23 @@ export const triageAgent = Agent.create({
   - Flesh It Out Agent: For fleshing out startup ideas into concrete concepts
   - Does It Exist Agent: For idea validation, competitor analysis, market gaps, and "does this already exist" questions
   - Pain Points Agent: For analyzing customer pain points and problem validation
+  - EyePop Vision Agent: For analyzing images using AI vision - detecting objects, faces, text, and extracting visual insights
+  - SEO Agent: For generating SEO keywords and strategy for a startup
+  - Marketing Plan Agent: For creating a marketing plan to reach $1M MRR for a startup idea.
   
   If the request is simple and you can handle it directly, do so. Otherwise, hand off to the appropriate specialist.
   
   Always be friendly and let the user know you're connecting them to the right person.`,
-  handoffs: [handoff(fleshItOutAgent), handoff(marketResearchAgent), handoff(painpointsAgent)]
+
+  handoffs: [
+    handoff(fleshItOutAgent),
+    handoff(marketResearchAgent),
+    handoff(painpointsAgent),
+    handoff(seoAgent),
+    handoff(marketingPlanAgent),
+    handoff(eyepopAgent),
+  ],
+
 });
 
 export const summaryAgent = Agent.create({

@@ -1,12 +1,18 @@
 import { fleshItOutAgent, fleshItOutAgentConfig } from './fleshit';
 import { marketResearchAgent, marketResearchAgentConfig } from './market-research';
+import { marketingPlanAgent, marketingPlanAgentConfig } from './marketing-plan';
 import { painpointsAgent, painpointsAgentConfig } from './painpoints';
+import { eyepopAgent, eyepopAgentConfig } from './eyepop';
+import { seoAgent, seoAgentConfig } from './seo';
 
 // All available agents
 export const agents = {
   fleshit: fleshItOutAgent,
   'market-research': marketResearchAgent,
   painpoints: painpointsAgent,
+  eyepop: eyepopAgent,
+  seo: seoAgent,
+  'marketing-plan': marketingPlanAgent,
 };
 
 // Agent configurations for UI
@@ -14,14 +20,20 @@ export const agentConfigs = [
   fleshItOutAgentConfig,
   marketResearchAgentConfig,
   painpointsAgentConfig,
+  eyepopAgentConfig,
+  seoAgentConfig,
+  marketingPlanAgentConfig,
 ];
 
 // Export individual agents
-export { fleshItOutAgent, marketResearchAgent, painpointsAgent };
+export { fleshItOutAgent, marketResearchAgent, painpointsAgent, seoAgent, marketingPlanAgent };
 export {
   fleshItOutAgentConfig,
   marketResearchAgentConfig,
   painpointsAgentConfig,
+  eyepopAgentConfig,
+  seoAgentConfig,
+  marketingPlanAgentConfig,
 };
 
 // Agent type

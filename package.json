@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@eyepop.ai/eyepop": "^1.17.3",
     "@openai/agents": "latest",
     "@tailwindcss/typography": "^0.5.16",
     "next": "^15.0.0",
