@@ -1,4 +1,4 @@
-import { Agent } from '@openai/agents';
+import { Agent, webSearchTool } from '@openai/agents';
 
 export const seoAgent = new Agent({
   name: 'SEO Agent',
@@ -23,6 +23,7 @@ Given a startup idea, you must perform the following steps:
 5.  **Content Strategy Suggestions**: Based on the keyword strategy, suggest 3-5 high-level content ideas (e.g., blog posts, ultimate guides, landing pages) that would effectively target these keywords.
 
 Present the output in a well-structured markdown format, using headings for each section. Your analysis should be practical and actionable for a founder looking to build an initial SEO presence.`,
+tools: [webSearchTool()]
 });
 
 export const seoAgentConfig = {

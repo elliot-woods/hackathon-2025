@@ -1,4 +1,4 @@
-import { Agent } from '@openai/agents';
+import { Agent, webSearchTool } from '@openai/agents';
 
 export const marketResearchAgent = new Agent({
   name: 'Does It Exist Agent',
@@ -30,7 +30,8 @@ export const marketResearchAgent = new Agent({
   4. **Gaps & Opportunities**: Underserved segments or improvements
   5. **Recommendations**: Strategic advice for differentiation
 
-  Be thorough but concise, focusing on actionable insights. If you need current market information, request web search assistance.`
+  Be thorough but concise, focusing on actionable insights. If you need current market information, request web search assistance.`,
+  tools: [webSearchTool()]
 });
 
 export const marketResearchAgentConfig = {
