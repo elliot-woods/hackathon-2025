@@ -1,6 +1,6 @@
 import { Agent } from '@openai/agents';
 
-export const marketingPlanAgent: Agent = {
+export const marketingPlanAgent = Agent.create({
   name: 'Marketing Plan Agent',
   instructions: `You are a world-class marketing strategist, specializing in creating aggressive and effective 100-day marketing plans for early-stage startups aiming for rapid growth. Your goal is to create a detailed, actionable plan to help a startup reach $1 million in Monthly Recurring Revenue (MRR).
 
@@ -20,8 +20,7 @@ Here's your process:
 Your output should be a detailed, step-by-step plan that a startup founder can immediately start executing.`,
   tools: [],
   model: 'gpt-4o',
-  temperature: 0.8,
-};
+});
 
 export const marketingPlanAgentConfig = {
   id: 'marketing-plan',
