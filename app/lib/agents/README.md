@@ -1,100 +1,80 @@
-# Agents Directory
+# Agents
 
-This directory contains modular agent definitions that make it easy to add new handoff agents.
+This directory contains specialized AI agents for different startup and business tasks.
 
-## Structure
+## Available Agents
 
-- `fleshit.ts` - Flesh It Out Agent for startup idea development
-- `market-research.ts` - Does It Exist Agent for idea validation and competitor analysis
-- `painpoints.ts` - Pain Points Agent for customer pain point analysis
-- `index.ts` - Exports all agents and configurations
+### 1. Flesh It Out Agent (`fleshit`)
+- **Purpose**: Develop startup ideas into concrete concepts
+- **Features**: Problem space analysis, market analysis, ICP definition, competitive landscape
+- **Icon**: 💡
 
-## Adding a New Agent
+### 2. Market Research Agent (`market-research`)
+- **Purpose**: Idea validation and competitive analysis
+- **Features**: Competitor research, market gap analysis, strategic insights
+- **Icon**: 🔍
 
-### 1. Create the Agent File
+### 3. Pain Points Agent (`painpoints`)
+- **Purpose**: Analyze customer pain points and problem validation
+- **Features**: Customer problem analysis, validation strategies
+- **Icon**: 🎯
 
-Create a new file `app/lib/agents/yourAgent.ts`:
+### 4. EyePop Vision Agent (`eyepop`)
+- **Purpose**: AI-powered image analysis using EyePop's computer vision API
+- **Features**: Object detection, face analysis, text recognition, scene understanding
+- **Icon**: 👁️
 
-```typescript
-import { Agent } from '@openai/agents';
+## EyePop Agent Setup
 
-export const yourAgent = new Agent({
-  name: 'Your Agent Name',
-  instructions: `You are a specialist that helps with:
-  - Task 1
-  - Task 2
-  - Task 3
-  
-  Always be helpful and professional.`
-});
+The EyePop agent requires additional environment variables:
 
-export const yourAgentConfig = {
-  name: 'Your Agent Name',
-  type: 'yourAgent' as const,
-  description: 'Brief description of what this agent does',
-  icon: '🎯', // Pick an emoji
-  color: 'from-red-500 to-red-600' // Pick a Tailwind gradient
-};
+```env
+EYEPOP_SECRET_KEY=your_secret_key_here
+EYEPOP_POP_ID=your_pop_id_here
 ```
 
-### 2. Add to Index
+### Getting EyePop Credentials
 
-Update `app/lib/agents/index.ts`:
+1. Sign up at [EyePop.ai](https://eyepop.ai)
+2. Create a new Pop (endpoint) in your dashboard
+3. Copy the Pop ID from the settings
+4. Generate an API key from your profile section
 
-```typescript
-// Add import
-import { yourAgent, yourAgentConfig } from './yourAgent';
+### Usage Example
 
-// Add to agents object
-export const agents = {
-  fleshit: fleshItOutAgent,
-  'market-research': marketResearchAgent,
-  painpoints: painpointsAgent,
-  yourAgent: yourAgent // Add here
-};
+```javascript
+import { analyzeImageWithEyePop } from './eyepop';
 
-// Add to configs array
-export const agentConfigs = [
-  fleshItOutAgentConfig,
-  marketResearchAgentConfig,
-  painpointsAgentConfig,
-  yourAgentConfig // Add here
-];
+// Analyze an image file
+const result = await analyzeImageWithEyePop('/path/to/image.jpg');
 
-// Add to exports
-export { yourAgent, yourAgentConfig };
+// Analyze an image from URL
+const result = await analyzeImageWithEyePop(undefined, 'https://example.com/image.jpg');
+
+console.log(result);
+// {
+//   success: true,
+//   results: [...detection results...],
+//   summary: {
+//     total_detections: 5,
+//     processed_at: "2023-...",
+//     image_source: "..."
+//   }
+// }
 ```
 
-### 3. Update Triage Agent
+## Agent Architecture
 
-Update `app/lib/agents.ts` to include your agent in handoffs:
+Each agent follows the same pattern:
+1. **Agent Configuration**: Uses `@openai/agents` for AI capabilities
+2. **Instructions**: Detailed prompt for the agent's role and behavior
+3. **Export Configuration**: UI metadata (name, description, icon, color)
+4. **Integration**: Registered in `index.ts` and `agents.ts`
 
-```typescript
-import { yourAgent } from './agents/yourAgent';
+## Adding New Agents
 
-export const triageAgent = Agent.create({
-  // ... existing config
-  handoffs: [
-    handoff(fleshItOutAgent),
-    handoff(marketResearchAgent),
-    handoff(painpointsAgent),
-    handoff(yourAgent) // Add here
-  ]
-});
-```
-
-### 4. Update Agent Detection
-
-Update the `runTriageAgent` function to detect your agent:
-
-```typescript
-return {
-  response: response,
-  agentUsed: response.includes('Flesh It Out Agent') ? 'fleshit' :
-             response.includes('Does It Exist Agent') ? 'market-research' : 
-             response.includes('Pain Points Agent') ? 'painpoints' :
-             response.includes('Your Agent Name') ? 'yourAgent' : 'triage'
-};
-```
-
-That's it! Your new agent will automatically appear in the AgentCards interface and be available for direct interaction. 
+1. Create a new file in this directory
+2. Export both the agent and its configuration
+3. Add imports to `index.ts`
+4. Update the triage agent in `agents.ts`
+5. Add handoff logic for routing 

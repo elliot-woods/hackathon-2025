@@ -25,3 +25,6 @@ Thumbs.db
 
 # Deployment
 .vercel/
+
+# Temporary files
+tmp/
