@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -111,7 +112,13 @@ export default function ChatInterface() {
                   : 'bg-gray-100 text-gray-800'
               }`}
             >
-              <p className="text-sm">{message.text}</p>
+              {message.sender === 'user' ? (
+                <p className="text-sm">{message.text}</p>
+              ) : (
+                <div className="text-sm prose prose-sm max-w-none">
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                </div>
+              )}
               {message.agentUsed && (
                 <div className="mt-2">
                   <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getAgentColor(message.agentUsed)}`}>
