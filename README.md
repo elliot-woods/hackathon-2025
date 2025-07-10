@@ -1,4 +1,4 @@
-# Startup Agent
+# Agent Factory
 
 A NextJS webapp with AI agent chat interface featuring intelligent triage and handoff capabilities.
 
