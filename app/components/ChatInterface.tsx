@@ -71,9 +71,9 @@ export default function ChatInterface() {
 
   const getAgentColor = (agentUsed?: string) => {
     switch (agentUsed) {
-      case 'billing': return 'bg-blue-100 text-blue-800';
-      case 'support': return 'bg-green-100 text-green-800';
-      case 'sales': return 'bg-purple-100 text-purple-800';
+      case 'fleshit': return 'bg-orange-100 text-orange-800';
+      case 'market-research': return 'bg-green-100 text-green-800';
+      case 'painpoints': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -96,7 +96,7 @@ export default function ChatInterface() {
               </svg>
             </div>
             <p>Start a conversation!</p>
-            <p className="text-sm mt-2">Try asking about billing, support, or sales</p>
+            <p className="text-sm mt-2">Try asking about startup ideas, market validation, or pain points</p>
           </div>
         )}
 
