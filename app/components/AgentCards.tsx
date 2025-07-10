@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { agentConfigs, type AgentType } from '../lib/agents/index';
 
@@ -9,29 +9,95 @@ export default function AgentCards() {
   const [inputValue, setInputValue] = useState('');
   const [response, setResponse] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const runAgent = async (agentType: AgentType, message: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          message: message,
-          preferredAgent: agentType 
-        }),
-      });
+      // Handle EyePop agent with image upload
+      if (agentType === 'eyepop' && uploadedImage) {
+        console.log('🔍 Starting EyePop image analysis...');
+        console.log('📋 Request details:', {
+          agentType,
+          message,
+          imageSize: uploadedImage.size,
+          imageType: uploadedImage.type,
+          imageName: uploadedImage.name
+        });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const formData = new FormData();
+        formData.append('image', uploadedImage);
+        formData.append('message', message);
+        formData.append('preferredAgent', agentType);
+
+        console.log('📤 Sending request to /api/upload-image...');
+        const response = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData,
+        });
+
+        console.log('📥 Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ Network error details:', {
+            status: response.status,
+            statusText: response.statusText,
+            responseBody: errorText
+          });
+          throw new Error(`Network response was not ok: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ EyePop analysis completed successfully');
+        setResponse(data.response);
+      } else {
+        // Regular text-based agent interaction
+        console.log('💬 Starting regular agent interaction...');
+        console.log('📋 Request details:', {
+          agentType,
+          message
+        });
+
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            message: message,
+            preferredAgent: agentType 
+          }),
+        });
+
+        console.log('📥 Response received:', {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ Network error details:', {
+            status: response.status,
+            statusText: response.statusText,
+            responseBody: errorText
+          });
+          throw new Error(`Network response was not ok: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Agent interaction completed successfully');
+        setResponse(data.response);
       }
-
-      const data = await response.json();
-      setResponse(data.response);
     } catch (error) {
-      console.error('Error running agent:', error);
+      console.error('💥 Error running agent:', error);
       setResponse('Sorry, I encountered an error. Please try again.');
     } finally {
       setIsLoading(false);
@@ -40,23 +106,95 @@ export default function AgentCards() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim() || !selectedAgent || isLoading) return;
+    if (!selectedAgent || isLoading) return;
+    
+    // For EyePop agent, require either an image or message
+    if (selectedAgent === 'eyepop' && !uploadedImage && !inputValue.trim()) {
+      return;
+    }
+    
+    // For other agents, require a message
+    if (selectedAgent !== 'eyepop' && !inputValue.trim()) {
+      return;
+    }
 
-    runAgent(selectedAgent, inputValue);
+    runAgent(selectedAgent, inputValue || 'Please analyze this image');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (!inputValue.trim() || !selectedAgent || isLoading) return;
-      runAgent(selectedAgent, inputValue);
+      if (!selectedAgent || isLoading) return;
+      
+      // For EyePop agent, require either an image or message
+      if (selectedAgent === 'eyepop' && !uploadedImage && !inputValue.trim()) {
+        return;
+      }
+      
+      // For other agents, require a message
+      if (selectedAgent !== 'eyepop' && !inputValue.trim()) {
+        return;
+      }
+      
+      runAgent(selectedAgent, inputValue || 'Please analyze this image');
     }
+  };
+
+  // Image handling functions
+  const handleImageUpload = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+    
+    setUploadedImage(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleImageUpload(e.dataTransfer.files[0]);
+    }
+  }, []);
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleImageUpload(e.target.files[0]);
+    }
+  };
+
+  const removeImage = () => {
+    setUploadedImage(null);
+    setImagePreview(null);
   };
 
   const resetSelection = () => {
     setSelectedAgent(null);
     setInputValue('');
     setResponse(null);
+    setUploadedImage(null);
+    setImagePreview(null);
+    setDragActive(false);
   };
 
   const selectedAgentConfig = agentConfigs.find(a => a.type === selectedAgent);
@@ -112,23 +250,98 @@ export default function AgentCards() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <textarea
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={`Ask the ${selectedAgentConfig?.name} anything... (Press Enter to send, Shift+Enter for new line)`}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                rows={3}
-                disabled={isLoading}
-              />
-            </div>
+            {/* EyePop Agent - Image Upload Interface */}
+            {selectedAgent === 'eyepop' && (
+              <div className="space-y-4">
+                {/* Drag and Drop Area */}
+                <div
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                  className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                    dragActive
+                      ? 'border-purple-400 bg-purple-50'
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileInput}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    disabled={isLoading}
+                  />
+                  
+                  {!uploadedImage ? (
+                    <div className="space-y-2">
+                      <div className="text-4xl">👁️</div>
+                      <div className="text-lg font-medium text-gray-700">
+                        Drop an image here or click to upload
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Supports JPG, PNG, GIF, WebP
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="relative inline-block">
+                        <img
+                          src={imagePreview!}
+                          alt="Preview"
+                          className="max-w-full max-h-48 rounded-lg shadow-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeImage}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {uploadedImage.name}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Optional Text Input */}
+                <div>
+                  <textarea
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Add a message (optional)... What would you like me to analyze in this image?"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                    rows={2}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+            )}
+            
+            {/* Other Agents - Text Only Interface */}
+            {selectedAgent !== 'eyepop' && (
+              <div>
+                <textarea
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={`Ask the ${selectedAgentConfig?.name} anything... (Press Enter to send, Shift+Enter for new line)`}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  rows={3}
+                  disabled={isLoading}
+                />
+              </div>
+            )}
+            
             <button
               type="submit"
-              disabled={isLoading || !inputValue.trim()}
+              disabled={isLoading || (selectedAgent === 'eyepop' ? !uploadedImage && !inputValue.trim() : !inputValue.trim())}
               className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isLoading ? 'Processing...' : 'Send Message'}
+              {isLoading ? 'Processing...' : selectedAgent === 'eyepop' ? 'Analyze Image' : 'Send Message'}
             </button>
           </form>
 
