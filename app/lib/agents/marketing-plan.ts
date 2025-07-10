@@ -1,4 +1,4 @@
-import { Agent } from '@openai/agents';
+import { Agent, webSearchTool } from '@openai/agents';
 
 export const marketingPlanAgent = Agent.create({
   name: 'Marketing Plan Agent',
@@ -18,7 +18,7 @@ Here's your process:
 6.  **Metrics for Success:** Define the Key Performance Indicators (KPIs) to track throughout the 100 days.
 
 Your output should be a detailed, step-by-step plan that a startup founder can immediately start executing.`,
-  tools: [],
+  tools: [webSearchTool()],
   model: 'gpt-4o',
 });
 

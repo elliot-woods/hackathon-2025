@@ -132,7 +132,7 @@ export async function analyzeImageWithEyePop(imagePath?: string, imageUrl?: stri
         total_detections: results.length,
         processed_at: new Date().toISOString(),
         image_source: imagePath || imageUrl
-      }
+      } 
     };
 
   } catch (error) {
