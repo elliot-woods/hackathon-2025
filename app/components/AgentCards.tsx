@@ -12,6 +12,13 @@ export default function AgentCards() {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [conversationHistory, setConversationHistory] = useState<Array<{
+    id: string;
+    text: string;
+    sender: 'user' | 'agent';
+    agentUsed?: string;
+    timestamp: string;
+  }>>([]);
 
   const runAgent = async (agentType: AgentType, message: string) => {
     setIsLoading(true);
@@ -56,6 +63,24 @@ export default function AgentCards() {
 
         const data = await response.json();
         console.log('✅ EyePop analysis completed successfully');
+        
+        // Update conversation history for image analysis
+        const userMessage = {
+          id: Date.now().toString(),
+          text: uploadedImage ? `[Image: ${uploadedImage.name}] ${message}` : message,
+          sender: 'user' as const,
+          timestamp: new Date().toISOString()
+        };
+        
+        const agentMessage = {
+          id: (Date.now() + 1).toString(),
+          text: data.response,
+          sender: 'agent' as const,
+          agentUsed: data.agentUsed || agentType,
+          timestamp: data.timestamp || new Date().toISOString()
+        };
+        
+        setConversationHistory(prev => [...prev, userMessage, agentMessage]);
         setResponse(data.response);
       } else {
         // Regular text-based agent interaction
@@ -72,7 +97,8 @@ export default function AgentCards() {
           },
           body: JSON.stringify({ 
             message: message,
-            preferredAgent: agentType 
+            preferredAgent: agentType,
+            conversationHistory: conversationHistory
           }),
         });
 
@@ -94,6 +120,24 @@ export default function AgentCards() {
 
         const data = await response.json();
         console.log('✅ Agent interaction completed successfully');
+        
+        // Update conversation history for regular text interaction
+        const userMessage = {
+          id: Date.now().toString(),
+          text: message,
+          sender: 'user' as const,
+          timestamp: new Date().toISOString()
+        };
+        
+        const agentMessage = {
+          id: (Date.now() + 1).toString(),
+          text: data.response,
+          sender: 'agent' as const,
+          agentUsed: data.agentUsed,
+          timestamp: data.timestamp || new Date().toISOString()
+        };
+        
+        setConversationHistory(prev => [...prev, userMessage, agentMessage]);
         setResponse(data.response);
       }
     } catch (error) {
@@ -195,6 +239,7 @@ export default function AgentCards() {
     setUploadedImage(null);
     setImagePreview(null);
     setDragActive(false);
+    setConversationHistory([]);
   };
 
   const selectedAgentConfig = agentConfigs.find(a => a.type === selectedAgent);

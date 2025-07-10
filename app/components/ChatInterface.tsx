@@ -37,7 +37,10 @@ export default function ChatInterface() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: inputValue }),
+        body: JSON.stringify({ 
+          message: inputValue,
+          conversationHistory: messages
+        }),
       });
 
       if (!response.ok) {

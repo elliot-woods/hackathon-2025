@@ -61,7 +61,7 @@ Look for opportunities in:
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, preferredAgent } = await req.json();
+    const { message, preferredAgent, conversationHistory = [] } = await req.json();
 
     if (!message) {
       return NextResponse.json(
@@ -69,6 +69,20 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Format conversation history for context
+    const formatConversationHistory = (history: any[]) => {
+      if (history.length === 0) return '';
+      
+      return '\n\nConversation History:\n' + 
+        history.map((msg: any) => {
+          const role = msg.sender === 'user' ? 'User' : 'Assistant';
+          const agentInfo = msg.agentUsed ? ` (${msg.agentUsed} agent)` : '';
+          return `${role}${agentInfo}: ${msg.text}`;
+        }).join('\n') + '\n\nCurrent Message:';
+    };
+
+    const conversationContext = formatConversationHistory(conversationHistory);
 
     let result = {
       response: 'Sorry, I encountered an error processing your request.',
@@ -80,13 +94,13 @@ export async function POST(req: NextRequest) {
       const { run } = await import('@openai/agents');
       const agent = agents[preferredAgent as AgentType];
       
-      let enhancedMessage = message;
+      let enhancedMessage = conversationContext + message;
       
       // For market research agent, perform web search first
       if (preferredAgent === 'market-research') {
         const searchQuery = `${message} competitors market analysis`;
         const searchResults = await performWebSearch(searchQuery);
-        enhancedMessage = `${message}\n\n${searchResults}`;
+        enhancedMessage = conversationContext + message + `\n\n${searchResults}`;
       }
       
       const agentResult = await run(agent, enhancedMessage);
@@ -95,8 +109,12 @@ export async function POST(req: NextRequest) {
         agentUsed: preferredAgent
       };
     } else {
-      // Run the triage agent
-      result = await runTriageAgent(message);
+      // Run the triage agent with conversation context
+      const triageResult = await runTriageAgent(conversationContext + message);
+      result = {
+        response: triageResult.response,
+        agentUsed: triageResult.agentUsed || (triageResult.agentsUsed ? triageResult.agentsUsed.join(', ') : 'triage')
+      };
     }
 
     return NextResponse.json({
