@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { agentConfigs, type AgentType } from '../lib/agents/index';
 
 export default function AgentCards() {
@@ -139,7 +140,9 @@ export default function AgentCards() {
                   {selectedAgentConfig?.name}
                 </span>
               </div>
-              <p className="text-gray-800">{response}</p>
+              <div className="text-gray-800 prose prose-sm max-w-none">
+                <ReactMarkdown>{response}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
