@@ -51,8 +51,11 @@ export const moAgent = Agent.create({
   
   Available agents:
   - Flesh It Out Agent: For fleshing out startup ideas into concrete concepts
-  - Does It Exist Agent: For idea validation, competitor analysis, market gaps
+  - Does It Exist Agent: For idea validation, competitor analysis, market gaps, and "does this already exist" questions
   - Pain Points Agent: For analyzing customer pain points and problem validation
+  - EyePop Vision Agent: For analyzing images using AI vision - detecting objects, faces, text, and extracting visual insights
+  - SEO Agent: For generating SEO keywords and strategy for a startup
+  - Marketing Plan Agent: For creating a marketing plan to reach $1M MRR for a startup idea.
   - Summary Agent: For summarizing the results of the agents into a single response, make sure this agent is always used if multiple agents are used and always add it last
   
   Return your analysis as structured JSON data showing which agents should be involved and what specific prompts they should receive. Use the following format:
@@ -109,6 +112,24 @@ export async function runTriageAgent(userMessage: string) {
 
     let result;
     switch (agentName) {
+      case 'EyePop Vision Agent':
+        console.log('running eyepop vision agent with prompt: ', agentPrompt);
+        result = await run(eyepopAgent, agentPrompt);
+        results.push(result.finalOutput);
+        agentsUsed.push(agentName);
+        break;
+      case "SEO Agent":
+        console.log('running seo agent with prompt: ', agentPrompt);
+        result = await run(seoAgent, agentPrompt);
+        results.push(result.finalOutput);
+        agentsUsed.push(agentName);
+        break;
+      case "Marketing Plan Agent":
+        console.log('running marketing plan agent with prompt: ', agentPrompt);
+        result = await run(marketingPlanAgent, agentPrompt);
+        results.push(result.finalOutput);
+        agentsUsed.push(agentName);
+        break;
       case 'Flesh It Out Agent':
         console.log('running flesh it out agent with prompt: ', agentPrompt);
         result = await run(fleshItOutAgent, agentPrompt);
