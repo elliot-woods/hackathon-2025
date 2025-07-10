@@ -13,7 +13,7 @@ export const painpointsAgent = new Agent({
 1. Alternatives What other solutions have they used or considered in the process?
 1. Struggles What problems were they trying to solve?
 1. Segment What customer information is relevant to the story?
-1. Category What other things belong in the same group as this product or service?
+1. Category What other things belong in the same group as this product or service?@!
 1. Triggers What specific events compleled them to act?
 Organize it into a table with each category as a column, Don't use html`
 });
