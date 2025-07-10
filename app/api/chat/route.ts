@@ -6,12 +6,6 @@ import { agents, type AgentType } from '../../lib/agents/index';
 async function performWebSearch(query: string): Promise<string> {
   try {
     // Simulate web search results with multiple targeted queries
-    const searchQueries = [
-      `${query} competitors`,
-      `${query} market size trends`,
-      `${query} existing solutions`,
-      `${query} startup funding recent`
-    ];
     
     let searchResults = `[Market Research Results for "${query}"]\n\n`;
     

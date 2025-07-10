@@ -1,4 +1,4 @@
-import { Agent } from '@openai/agents';
+import { Agent, webSearchTool } from '@openai/agents';
 
 export const painpointsAgent = new Agent({
   name: 'Pain Points Agent',
@@ -15,7 +15,8 @@ export const painpointsAgent = new Agent({
 1. Segment What customer information is relevant to the story?
 1. Category What other things belong in the same group as this product or service?@!
 1. Triggers What specific events compleled them to act?
-Organize it into a table with each category as a column, Don't use html`
+Organize it into a table with each category as a column, Don't use html`,
+tools: [webSearchTool()]
 });
 
 export const painpointsAgentConfig = {

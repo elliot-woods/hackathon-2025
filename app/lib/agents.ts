@@ -83,6 +83,13 @@ export async function runTriageAgent(userMessage: string) {
   // const result = await run(triageAgent, userMessage);
   const result = await run(moAgent, userMessage);
 
+  if (!result.finalOutput) {
+    return {
+      response: 'Sorry, I encountered an error processing your request.',
+      agentUsed: 'mo'
+    };
+  }
+
   const parsedResult = JSON.parse(result.finalOutput);
   if (parsedResult.response) {
     return {
@@ -126,31 +133,26 @@ export async function runTriageAgent(userMessage: string) {
       case 'Flesh It Out Agent':
         console.log('running flesh it out agent with prompt: ', agentPrompt);
         result = await run(fleshItOutAgent, agentPrompt);
-        results.push(result.finalOutput);
+        results.push(result.finalOutput || 'Error: No response from agent');
         agentsUsed.push(agentName);
         break;
       case 'Does It Exist Agent':
         console.log('running does it exist agent with prompt: ', agentPrompt);
         result = await run(marketResearchAgent, agentPrompt);
-        results.push(result.finalOutput);
+        results.push(result.finalOutput || 'Error: No response from agent');
         agentsUsed.push(agentName);
         break;
       case 'Pain Points Agent':
         console.log('running pain points agent with prompt: ', agentPrompt);
         result = await run(painpointsAgent, agentPrompt);
-        results.push(result.finalOutput);
+        results.push(result.finalOutput || 'Error: No response from agent');
         agentsUsed.push(agentName);
         break;
-      case 'Billing Agent':
-        console.log('running billing agent with prompt: ', agentPrompt);
-        result = await run(billingAgent, agentPrompt);
-        results.push(result.finalOutput);
-        agentsUsed.push(agentName);
-        break;
+
       case 'Summary Agent':
         console.log('running summary agent with results: ', results);
         result = await run(summaryAgent, `Here are the results of the agents: ${results.join('\n')}`);
-        results = [result.finalOutput];
+        results = [result.finalOutput || 'Error: No response from summary agent'];
         agentsUsed.push(agentName);
         break;
     }
@@ -161,6 +163,7 @@ export async function runTriageAgent(userMessage: string) {
   
   return {
     response: response,
+    agentUsed: agentsUsed.length > 0 ? agentsUsed.join(', ') : 'mo',
     agentsUsed: agentsUsed
   };
 } 

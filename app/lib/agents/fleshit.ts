@@ -1,4 +1,4 @@
-import { Agent } from '@openai/agents';
+import { Agent, webSearchTool } from '@openai/agents';
 
 export const fleshItOutAgent = new Agent({
   name: 'Flesh It Out Agent',
@@ -25,6 +25,7 @@ Given a startup idea, you must provide a detailed analysis covering the followin
 9.  **Key Risks and Challenges**: Identify the top 3-5 risks (market, technical, execution) and suggest potential mitigation strategies.
 
 Present the output in a well-structured markdown format, using headings for each section.`,
+tools: [webSearchTool()]
 });
 
 export const fleshItOutAgentConfig = {

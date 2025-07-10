@@ -82,19 +82,19 @@ export async function POST(req: NextRequest) {
     if (imageAnalysis && imageAnalysis.length > 0) {
       response += `## 🎯 Detected Objects\n\n`;
       
-      imageAnalysis.forEach((result: any, index: number) => {
+      (imageAnalysis as Array<{ objects?: Array<{ classLabel: string; confidence: number; x: number; y: number; width: number; height: number; classes?: Array<{ classLabel: string; confidence: number }> }> }>).forEach((result, index: number) => {
         if (result.objects && result.objects.length > 0) {
           response += `**Frame ${index + 1}:**\n`;
-          result.objects.forEach((obj: any, objIndex: number) => {
+          result.objects.forEach((obj, objIndex: number) => {
             response += `${objIndex + 1}. **${obj.classLabel}** (${Math.round(obj.confidence * 100)}% confidence)\n`;
             response += `   - Position: (${Math.round(obj.x)}, ${Math.round(obj.y)})\n`;
             response += `   - Size: ${Math.round(obj.width)} × ${Math.round(obj.height)}\n`;
             
             if (obj.classes && obj.classes.length > 0) {
               response += `   - Additional info: `;
-              obj.classes.forEach((cls: any, clsIndex: number) => {
+              obj.classes.forEach((cls, clsIndex: number) => {
                 response += `${cls.classLabel} (${Math.round(cls.confidence * 100)}%)`;
-                if (clsIndex < obj.classes.length - 1) response += ', ';
+                if (clsIndex < (obj.classes?.length || 0) - 1) response += ', ';
               });
               response += '\n';
             }
