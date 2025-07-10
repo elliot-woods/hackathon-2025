@@ -28,11 +28,8 @@ export const triageAgent = Agent.create({
     handoff(marketResearchAgent),
     handoff(painpointsAgent),
     handoff(seoAgent),
-<<<<<<< HEAD
     handoff(marketingPlanAgent),
-=======
     handoff(eyepopAgent),
->>>>>>> main
   ],
 
 });
